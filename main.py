@@ -35,9 +35,9 @@ def ci3(X, eps):
     """
     for a with unknown sigma^2
     """
+    n = X.shape[0]
     mean = np.mean(X)
     tau = stats.t.ppf( (1 + eps) / 2, df=n-1)
-    n = X.shape[0]
     S_0 = np.sqrt( np.mean((X -mean)**2) * (n / (n-1)) )
     return [ mean - tau * S_0 / (n**0.5), mean + tau * S_0 / (n**0.5) ]
 
@@ -53,7 +53,10 @@ def ci4(X, eps):
     return [ (n-1) * S_0 / g2, (n-1) * S_0 / g1 ]
 
 
-dir = 'sKa'
+dir = 'aUs'
+
+def get_ci(X, eps):
+    return ci3(X, eps)
 
 
 def plot_len_vs_n(epsilons):
@@ -62,7 +65,7 @@ def plot_len_vs_n(epsilons):
         sizes = range(7_000,25_000,10)
         for n in sizes:
             X = np.random.normal(a, sigma, n)
-            l,r = ci2(X, eps, a)
+            l,r = get_ci(X, eps)
             lengths.append(r - l)
         plt.plot(sizes, lengths, label=f'eps={eps}')
     plt.legend(loc='upper right')
@@ -76,10 +79,10 @@ def plot_len_vs_n(epsilons):
 def plot_len_vs_eps(sizes,title):
     for n in sizes:
         lengths = []
-        epsilons = np.linspace(0.1, 0.98, 20, endpoint=True)
+        epsilons = np.linspace(0.4, 0.98, 20, endpoint=True)
         for eps in epsilons:
             X = np.random.normal(a, sigma, n)
-            l,r = ci2(X, eps, a)
+            l,r = get_ci(X, eps)
             lengths.append(r - l)
         plt.plot(epsilons, lengths, label=f'n={n}')
     plt.legend(loc='upper right')
