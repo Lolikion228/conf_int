@@ -49,14 +49,14 @@ def ci4(X, eps):
     n = X.shape[0]
     g2 = stats.chi2.ppf( (1 + eps) / 2, df=n-1)
     g1 = stats.chi2.ppf( (1 - eps) / 2, df=n-1)
-    S_0 = np.sqrt(  np.mean((X -np.mean(X))**2) * (n / (n-1)) )
-    return [ (n-1) * S_0 / g2, (n-1) * S_0 / g1 ]
+    S_0_sq = np.mean((X -np.mean(X))**2) * (n / (n-1)) 
+    return [ (n-1) * S_0_sq / g2, (n-1) * S_0_sq / g1 ]
 
 
-dir = 'aUs'
+dir = 'sUa'
 
 def get_ci(X, eps):
-    return ci3(X, eps)
+    return ci4(X, eps)
 
 
 def plot_len_vs_n(epsilons):
@@ -79,7 +79,7 @@ def plot_len_vs_n(epsilons):
 def plot_len_vs_eps(sizes,title):
     for n in sizes:
         lengths = []
-        epsilons = np.linspace(0.4, 0.98, 20, endpoint=True)
+        epsilons = np.linspace(0.5, 0.98, 20, endpoint=True)
         for eps in epsilons:
             X = np.random.normal(a, sigma, n)
             l,r = get_ci(X, eps)
@@ -93,7 +93,7 @@ def plot_len_vs_eps(sizes,title):
     plt.close()
 
 epsilons = [0.8, 0.9, 0.92, 0.95, 0.98]
-sizes1 = [10, 50, 100, 300, 500, 700, 1000, 3000]
+sizes1 = [ 68, 100, 200, 300, 500, 700, 1000, 3000]
 sizes2 = [5000, 7000, 10_000, 15_000, 20_000, 25_000]
 plot_len_vs_eps(sizes1, "small_n")
 plot_len_vs_eps(sizes2, "big_n")
