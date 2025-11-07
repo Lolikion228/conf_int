@@ -42,3 +42,44 @@ def ci4(X, eps):
     return [ (n-1) * S_0 / g2, (n-1) * S_0 / g1 ]
 
 
+dir = 'aKs'
+
+def plot_len_vs_n(epsilons):
+    for eps in epsilons:
+        lengths = []
+        sizes = range(7_000,25_000,10)
+        for n in sizes:
+            X = np.random.normal(a, sigma, n)
+            l,r = ci1(X, eps, sigma)
+            lengths.append(r - l)
+        plt.plot(sizes, lengths, label=f'eps={eps}')
+    plt.legend(loc='upper right')
+    plt.title(f"len_VS_size")
+    plt.xlabel('sample size')
+    plt.ylabel('CI len')
+    plt.savefig(f"./{dir}/fixed_eps/first.png")
+    plt.close()
+
+
+def plot_len_vs_eps(sizes,title):
+    for n in sizes:
+        lengths = []
+        epsilons = np.linspace(0.1, 0.98, 20, endpoint=True)
+        for eps in epsilons:
+            X = np.random.normal(a, sigma, n)
+            l,r = ci1(X, eps, sigma)
+            lengths.append(r - l)
+        plt.plot(epsilons, lengths, label=f'n={n}')
+    plt.legend(loc='upper right')
+    plt.title(f"len_VS_eps")
+    plt.xlabel('eps')
+    plt.ylabel('CI len')
+    plt.savefig(f"./{dir}/fixed_n/{title}.png")
+    plt.close()
+
+epsilons = [0.8, 0.9, 0.92, 0.95, 0.98]
+sizes1 = [10, 50, 100, 300, 500, 700, 1000, 3000]
+sizes2 = [5000, 7000, 10_000, 15_000, 20_000, 25_000]
+# plot_len_vs_eps(sizes1, "small_n")
+# plot_len_vs_eps(sizes2, "big_n")
+plot_len_vs_n(epsilons)
