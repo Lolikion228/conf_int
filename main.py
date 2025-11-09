@@ -56,7 +56,7 @@ def ci4(X, eps):
 dir = 'sUa'
 
 def get_ci(X, eps):
-    return ci4(X, eps)
+    return ci2(X, eps, a)
 
 
 def plot_len_vs_n(epsilons):
@@ -92,9 +92,37 @@ def plot_len_vs_eps(sizes,title):
     plt.savefig(f"./{dir}/fixed_n/{title}.png")
     plt.close()
 
-epsilons = [0.8, 0.9, 0.92, 0.95, 0.98]
-sizes1 = [ 68, 100, 200, 300, 500, 700, 1000, 3000]
-sizes2 = [5000, 7000, 10_000, 15_000, 20_000, 25_000]
-plot_len_vs_eps(sizes1, "small_n")
-plot_len_vs_eps(sizes2, "big_n")
-plot_len_vs_n(epsilons)
+
+def check_ci(N, size, eps):
+    cnt = 0
+    for _ in range(N):
+        X = np.random.normal(a, sigma, size)
+        l,r = get_ci(X, eps)
+        cnt += (l <= sigma**2 <= r)
+    return cnt / N
+
+epsilons = np.linspace(0.2, 0.97, 40, endpoint=True)
+
+for N in [1000, 5000, 10000]:
+    for size in [100, 500, 1000, 2000, 5000]:
+        print(f"N={N} size={size}")
+        probs = []
+        for eps in epsilons:
+            prob = check_ci(N, size, eps)
+            probs.append(prob)
+        plt.scatter(epsilons, probs, c='b')
+        plt.plot([0,1], [0,1], c='r')
+        plt.xlabel('theoretical eps')
+        plt.ylabel('empirical eps')
+        plt.title(f"N={N}_size={size}")
+        plt.savefig(f"./pics/N={N}_size={size}.png")
+        plt.close()
+
+
+
+# epsilons = [0.8, 0.9, 0.92, 0.95, 0.98]
+# sizes1 = [ 68, 100, 200, 300, 500, 700, 1000, 3000]
+# sizes2 = [5000, 7000, 10_000, 15_000, 20_000, 25_000]
+# plot_len_vs_eps(sizes1, "small_n")
+# plot_len_vs_eps(sizes2, "big_n")
+# plot_len_vs_n(epsilons)
